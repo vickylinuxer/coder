@@ -72,6 +72,16 @@ python3 coder.py --wpm 40 --typo-rate 0.01 --max-interval 10
 
 ---
 
+## Running in a VM (VMware / VirtualBox)
+
+When the script runs inside a VM, all keyboard and mouse events are consumed by the guest OS. The Windows host sees no activity and locks after its idle timeout.
+
+**Fix on Windows host:**
+- Settings → System → Power & Sleep → set "Screen" and "Sleep" to **Never**
+- Or: Settings → Accounts → Sign-in options → "Require sign-in" → **Never**
+
+---
+
 ## Stopping
 
 - Press **Ctrl+C** in the terminal
