@@ -1,4 +1,4 @@
-# devworker
+# coder
 
 Simulates realistic coding activity in your editor by automatically typing Python, Bash, and Jenkins Groovy code snippets into a dummy project — with human-like speed, typos, and random intervals.
 
@@ -9,8 +9,8 @@ Works on **macOS** and **Linux**.
 ## How It Works
 
 1. Creates a dummy project with `.py`, `.sh`, `.groovy`, and `Jenkinsfile` files
-2. Opens VS Code pointing at the project
-3. Continuously picks a random file, opens it in VS Code, and types a matching code snippet
+2. Opens the editor pointing at the project
+3. Continuously picks a random file, opens it, and types a matching code snippet
 4. Saves the file and waits a random interval (3–15 seconds) before the next edit
 
 ---
@@ -18,31 +18,33 @@ Works on **macOS** and **Linux**.
 ## Requirements
 
 - Python 3.8+
-- VS Code with the `code` CLI available in PATH
-- `pyautogui`
+- Editor with the `code` CLI available in PATH
+
+### macOS
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Linux only — window focusing (install one)
+Go to **System Settings → Privacy & Security → Accessibility** and enable your terminal app.
+
+### Linux / Ubuntu 24.04
+
+Ubuntu 24.04 blocks system-wide `pip` (PEP 668). Use the setup script instead:
 
 ```bash
-sudo apt install wmctrl
-# or
-sudo apt install xdotool
+bash setup.sh
+source venv/bin/activate
 ```
 
-### macOS — Accessibility permission
-
-Go to **System Settings → Privacy & Security → Accessibility** and enable your terminal app (Terminal, iTerm2, etc.).
+This installs `wmctrl`, `python3-xlib`, `python3-venv` via apt and sets up a venv.
 
 ---
 
 ## Usage
 
 ```bash
-python3 simulator.py [OPTIONS]
+python3 coder.py [OPTIONS]
 ```
 
 ### Options
@@ -58,13 +60,13 @@ python3 simulator.py [OPTIONS]
 
 ```bash
 # Default settings
-python3 simulator.py
+python3 coder.py
 
 # Faster typing, custom project path
-python3 simulator.py --project ~/work/my_project --wpm 80
+python3 coder.py --project ~/work/my_project --wpm 80
 
 # Slower, more deliberate typing with fewer typos
-python3 simulator.py --wpm 40 --typo-rate 0.01 --max-interval 10
+python3 coder.py --wpm 40 --typo-rate 0.01 --max-interval 10
 ```
 
 ---
