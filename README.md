@@ -23,7 +23,8 @@ Works on **macOS** and **Linux**.
 ### macOS
 
 ```bash
-pip install -r requirements.txt
+bash setup.sh
+source venv/bin/activate
 ```
 
 Go to **System Settings → Privacy & Security → Accessibility** and enable your terminal app.
