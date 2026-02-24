@@ -1,2 +1,2 @@
 pyautogui>=0.9.54
-python-xlib>=0.17      # Linux only — required by pyautogui on X11/XWayland
+python-xlib>=0.17; sys_platform == "linux"

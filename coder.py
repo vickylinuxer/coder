@@ -376,6 +376,15 @@ def focus_editor() -> bool:
             if result.returncode == 0:
                 return True
 
+    elif PLATFORM == "Windows":
+        result = subprocess.run(
+            ["powershell", "-WindowStyle", "Hidden", "-c",
+             "Add-Type -AssemblyName Microsoft.VisualBasic; "
+             "[Microsoft.VisualBasic.Interaction]::AppActivate('Visual Studio Code')"],
+            capture_output=True,
+        )
+        return result.returncode == 0
+
     return False
 
 
@@ -468,6 +477,10 @@ def simulate(project: Path, wpm: int, typo_rate: float, max_interval: int) -> No
 
             wait = random.uniform(3, max_interval)
             print(f"  Saved. Next edit in {wait:.1f}s ...")
+            # Jiggle mouse 1 px and back — VMware Tools translates this to host
+            # cursor movement, resetting the Windows idle/lock timer.
+            pyautogui.moveRel(1, 0, duration=0)
+            pyautogui.moveRel(-1, 0, duration=0)
             time.sleep(wait)
 
     except pyautogui.FailSafeException:

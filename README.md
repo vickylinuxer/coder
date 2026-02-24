@@ -2,7 +2,7 @@
 
 Simulates realistic coding activity in your editor by automatically typing Python, Bash, and Jenkins Groovy code snippets into a dummy project — with human-like speed, typos, and random intervals.
 
-Works on **macOS** and **Linux**.
+Works on **Windows**, **macOS**, and **Linux**.
 
 ---
 
@@ -19,6 +19,15 @@ Works on **macOS** and **Linux**.
 
 - Python 3.8+
 - Editor with the `code` CLI available in PATH
+
+### Windows
+
+```powershell
+pip install -r requirements.txt
+python coder.py
+```
+
+No extra setup needed. `pyautogui` uses `SendInput` (Win32 API) on Windows, so keystrokes register as real user activity — the screen will not lock while the script runs.
 
 ### macOS
 
@@ -74,11 +83,9 @@ python3 coder.py --wpm 40 --typo-rate 0.01 --max-interval 10
 
 ## Running in a VM (VMware / VirtualBox)
 
-When the script runs inside a VM, all keyboard and mouse events are consumed by the guest OS. The Windows host sees no activity and locks after its idle timeout.
+When the script runs inside a Linux VM on a Windows host, all input events are consumed by the guest OS — Windows sees no activity and locks after its idle timeout.
 
-**Fix on Windows host:**
-- Settings → System → Power & Sleep → set "Screen" and "Sleep" to **Never**
-- Or: Settings → Accounts → Sign-in options → "Require sign-in" → **Never**
+**Recommended fix:** run the script directly on Windows instead. `pyautogui` on Windows uses `SendInput` (Win32 API), which generates real input events that reset the Windows idle timer natively.
 
 ---
 
