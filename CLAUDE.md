@@ -93,15 +93,17 @@ python3 coder.py --wpm 40 --typo-rate 0.01 --max-interval 10
 Go to **System Settings → Privacy & Security → Accessibility** and enable your terminal app (Terminal, iTerm2, etc.).
 
 ### Linux / Ubuntu 24.04
-Ubuntu 24.04 uses Wayland by default — the script requires X11/XWayland:
-- Log in with the **"Ubuntu on Xorg"** session at the login screen, **or**
-- Ensure XWayland is running (it starts automatically when VS Code is open)
+Ubuntu 24.04 blocks system-wide `pip` (PEP 668) and uses Wayland by default. Use the setup script:
 
-Install system dependencies:
 ```bash
-sudo apt install wmctrl python3-xlib
-pip install -r requirements.txt
+bash setup.sh
+source venv/bin/activate
+python3 coder.py
 ```
+
+The script installs `wmctrl`, `python3-xlib`, `python3-venv` via apt, then creates a venv and installs pip dependencies.
+
+**Wayland note:** the script requires X11/XWayland. Log in with **"Ubuntu on Xorg"** at the login screen, or ensure XWayland is running (VS Code starts it automatically).
 
 ---
 
