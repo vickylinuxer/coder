@@ -4,16 +4,16 @@
 
 A Python automation script that simulates realistic human coding activity in your editor. It creates a dummy project and continuously types code snippets (Python, Bash, Groovy/Jenkins) with human-like speed, typos, and random intervals.
 
-**Platforms:** macOS, Linux
+**Platforms:** macOS, Linux (Ubuntu 24.04+)
 
 ---
 
 ## Project Structure
 
 ```
-vscode-activity-simulator/
-├── simulator.py        # Main application — all logic in a single file (~503 lines)
-├── requirements.txt    # Python dependencies (pyautogui>=0.9.54)
+devworker/
+├── coder.py            # Main application — all logic in a single file (~520 lines)
+├── requirements.txt    # Python dependencies (pyautogui, python-xlib)
 └── README.md           # Usage documentation
 ```
 
@@ -31,9 +31,9 @@ dummy_project/
 ## Tech Stack
 
 - **Language:** Python 3.8+
-- **Key Dependency:** `pyautogui >= 0.9.54` (GUI automation)
+- **Key Dependencies:** `pyautogui >= 0.9.54` (GUI automation), `python-xlib >= 0.17` (Linux/X11)
 - **System Tools:** `osascript` (macOS), `wmctrl`/`xdotool` (Linux)
-- **VS Code CLI:** `code` must be in PATH
+- **Editor CLI:** `code` must be in PATH
 - **No build system, no test suite**
 
 ---
@@ -45,11 +45,11 @@ dummy_project/
 pip install -r requirements.txt
 
 # Run with defaults (60 WPM, 3% typo rate, up to 15s intervals)
-python3 simulator.py
+python3 coder.py
 
 # Custom options
-python3 simulator.py --project ~/work/my_project --wpm 80
-python3 simulator.py --wpm 40 --typo-rate 0.01 --max-interval 10
+python3 coder.py --project ~/work/my_project --wpm 80
+python3 coder.py --wpm 40 --typo-rate 0.01 --max-interval 10
 
 # Stop
 # Ctrl+C  OR  move mouse to top-left corner (PyAutoGUI failsafe)
@@ -68,16 +68,17 @@ python3 simulator.py --wpm 40 --typo-rate 0.01 --max-interval 10
 
 ## Architecture
 
-`simulator.py` is organized as a functional, single-file script:
+`coder.py` is organized as a functional, single-file script:
 
 | Section | Purpose |
 |---------|---------|
 | `PYTHON_SNIPPETS`, `BASH_SNIPPETS`, `GROOVY_SNIPPETS` | Pre-defined code pools per language |
 | `SNIPPET_MAP` | Maps file extension → snippet pool |
 | `PROJECT_FILES` | Template for dummy project structure |
+| `check_linux_deps()` | Warns about missing DISPLAY (Wayland) or wmctrl/xdotool on Linux |
 | `create_project()` | Initializes dummy project on disk |
-| `open_vscode()` / `open_file_in_vscode()` | VS Code launch and file opening |
-| `focus_vscode()` | Brings VS Code to foreground (platform-aware: AppleScript vs wmctrl/xdotool) |
+| `open_editor()` / `open_file_in_editor()` | Editor launch and file opening (uses `code` CLI internally) |
+| `focus_editor()` | Brings editor to foreground (platform-aware: AppleScript vs wmctrl/xdotool) |
 | `human_type()` | Core typing engine — WPM pacing, Gaussian jitter, random typos with backspace correction, natural pauses at `.`, `:`, `(`, `)` |
 | `simulate()` | Main loop: pick file → open → type → save → wait |
 | `main()` | CLI argument parsing and entry point |
@@ -91,12 +92,15 @@ python3 simulator.py --wpm 40 --typo-rate 0.01 --max-interval 10
 ### macOS
 Go to **System Settings → Privacy & Security → Accessibility** and enable your terminal app (Terminal, iTerm2, etc.).
 
-### Linux
-Install a window manager tool:
+### Linux / Ubuntu 24.04
+Ubuntu 24.04 uses Wayland by default — the script requires X11/XWayland:
+- Log in with the **"Ubuntu on Xorg"** session at the login screen, **or**
+- Ensure XWayland is running (it starts automatically when VS Code is open)
+
+Install system dependencies:
 ```bash
-sudo apt install wmctrl   # preferred
-# or
-sudo apt install xdotool
+sudo apt install wmctrl python3-xlib
+pip install -r requirements.txt
 ```
 
 ---
@@ -105,5 +109,5 @@ sudo apt install xdotool
 
 - `--max-interval` is capped at 15 seconds maximum
 - `pyautogui.FAILSAFE = True` — moving mouse to top-left corner aborts the simulation
-- VS Code must be installed and `code` CLI must be on PATH
+- Editor (`code` CLI) must be installed and on PATH
 - No tests exist — this is a single-purpose automation utility
