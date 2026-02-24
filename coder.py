@@ -299,6 +299,27 @@ SNIPPET_MAP: Dict[str, List[str]] = {
 
 # ─── Project setup ────────────────────────────────────────────────────────────
 
+def check_linux_deps() -> None:
+    """Warn about missing dependencies on Linux / Ubuntu 24.04."""
+    if not os.environ.get("DISPLAY"):
+        print(
+            "Warning: DISPLAY is not set.\n"
+            "Ubuntu 24.04 defaults to Wayland, but this script requires X11.\n"
+            "Fix: log out and select 'Ubuntu on Xorg' at the login screen,\n"
+            "     or launch with:  DISPLAY=:0 python3 coder.py\n"
+        )
+
+    missing = []
+    for tool in ("wmctrl", "xdotool"):
+        if subprocess.run(["which", tool], capture_output=True).returncode != 0:
+            missing.append(tool)
+    if len(missing) == 2:
+        print(
+            "Warning: neither wmctrl nor xdotool found.\n"
+            "Install one:  sudo apt install wmctrl\n"
+        )
+
+
 def create_project(base: Path) -> None:
     base.mkdir(parents=True, exist_ok=True)
     for rel_path, content in PROJECT_FILES.items():
@@ -487,6 +508,9 @@ def main() -> None:
 
     if args.max_interval > 15:
         parser.error("--max-interval cannot exceed 15 seconds.")
+
+    if PLATFORM == "Linux":
+        check_linux_deps()
 
     project = Path(args.project).expanduser()
     create_project(project)
